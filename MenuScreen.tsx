@@ -1,14 +1,15 @@
-
 import React, { useState } from 'react';
-import { View, ImageBackground,TextInput, Button, StyleSheet, Text } from 'react-native';
+import { View, ImageBackground, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 type MenuScreenProps = {
   addNewMenuItem: (newDish: { dishName: string; description: string; price: string; course: string }) => void;
-  navigation: { goBack: () => void; };
+  removeMenuItem: (index: number) => void;
+  menuItems: Array<{ dishName: string; description: string; price: string; course: string }>;
+  navigation: { goBack: () => void };
 };
 
-const MenuScreen: React.FC<MenuScreenProps> = ({ addNewMenuItem, navigation }) => {
+const MenuScreen: React.FC<MenuScreenProps> = ({ addNewMenuItem, removeMenuItem, menuItems, navigation }) => {
   const [dishName, setDishName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -21,55 +22,68 @@ const MenuScreen: React.FC<MenuScreenProps> = ({ addNewMenuItem, navigation }) =
     }
     const newDish = { dishName, description, price, course };
     addNewMenuItem(newDish);
-    navigation.goBack();
+    setDishName('');
+    setDescription('');
+    setPrice('');
+    setCourse('starter');
   };
 
   return (
-    <ImageBackground source={require('./assets/home.JPEG.jpeg')}
-    style={styles.background}>
-    <View style={styles.container}>
-      <TextInput
-        placeholder="Dish Name"
-        onChangeText={setDishName}
-        value={dishName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Description"
-        onChangeText={setDescription}
-        value={description}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Price"
-        keyboardType="numeric"
-        onChangeText={setPrice}
-        value={price}
-        style={styles.input}
-      />
-      
-      <Text style={styles.Text}>Select Course:</Text>
-      <Picker selectedValue={course} onValueChange={(itemValue) => setCourse(itemValue)}>
-        <Picker.Item label="Starter" value="starter" />
-        <Picker.Item label="Main" value="main" />
-        <Picker.Item label="Dessert" value="dessert" />
-      </Picker>
-      <Button title="Add Dish" onPress={addDish} />
-    </View>
+    <ImageBackground source={require('./assets/home.JPEG.jpeg')} style={styles.background}>
+      <View style={styles.container}>
+        <TextInput
+          placeholder="Dish Name"
+          onChangeText={setDishName}
+          value={dishName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Description"
+          onChangeText={setDescription}
+          value={description}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Price"
+          keyboardType="numeric"
+          onChangeText={setPrice}
+          value={price}
+          style={styles.input}
+        />
+        
+        <Text style={styles.Text}>Select Course:</Text>
+        <Picker selectedValue={course} onValueChange={(itemValue) => setCourse(itemValue)} style={styles.picker}>
+          <Picker.Item label="Starter" value="starter" />
+          <Picker.Item label="Main" value="main" />
+          <Picker.Item label="Dessert" value="dessert" />
+        </Picker>
+        
+        <Button title="Add Dish" onPress={addDish} />
+        
+        <Text style={styles.Text}>Menu Items:</Text>
+        {menuItems.map((item, index) => (
+          <View key={index} style={styles.menuItem}>
+            <Text>Dish Name: {item.dishName}</Text>
+            <Text>Description: {item.description}</Text>
+            <Text>Course: {item.course}</Text>
+            <Text>Price: {item.price}</Text>
+            <Button title="Remove Dish" onPress={() => removeMenuItem(index)} />
+          </View>
+        ))}
+        <Button title="Back to Home" onPress={() => navigation.goBack()} />
+      </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  background:{ 
-    flex:1,
+  background: {
+    flex: 1,
     resizeMode: 'center',
-    justifyContent:'center'},
-
+    justifyContent: 'center',
+  },
   container: {
     padding: 16,
-    textDecorationColor:'white'
-    
   },
   input: {
     marginVertical: 8,
@@ -77,21 +91,26 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 4,
-    textDecorationColor:'black',
-    borderBlockStartColor:'white',
-    fontSize:23
+    fontSize: 23,
   },
-
-    Text:{
-      fontSize:23,
-      textDecorationColor:'black'
-
-
-    },
-  
-    
-  
-  
+  Text: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  picker: {
+    height: 50,
+    width: 200,
+    alignSelf: 'center',
+  },
+  menuItem: {
+    marginVertical: 10,
+    padding: 10,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
 });
 
 export default MenuScreen;
