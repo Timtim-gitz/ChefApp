@@ -1,5 +1,7 @@
 Christoffel's Menu App
+
 Project Overview
+
 This app allows a private chef, Christoffel, to manage and display menu items with details like the dish name, description, course, and price. The app includes features for adding, viewing, filtering, and removing menu items.
 
 Changes Implemented Since Part 2
